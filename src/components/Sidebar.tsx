@@ -43,9 +43,7 @@ export default function Sidebar() {
 					</Stack>
 				</Box>
 				<Box>
-					<Text fontWeight={'bold'} color="gray.400" fontSize={'small'}>
-						AUTOMAÇÃO
-					</Text>
+					<Text fontWeight={'bold'} color="gray.400" fontSize={'small'}></Text>
 					<Stack spacing={4} mt="8" align={'stretch'}>
 						<Link display={'flex'} alignContent="center">
 							<Icon as={RiInputMethodLine} fontSize="20" />
