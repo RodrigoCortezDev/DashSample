@@ -1,13 +1,9 @@
 import dynamic from 'next/dynamic';
+
+import { Box, Flex, SimpleGrid, Text, theme } from '@chakra-ui/react';
+
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
-import {
-	Box,
-	Flex,
-	SimpleGrid,
-	Text,
-	theme
-	} from '@chakra-ui/react';
 
 //Importação usando lazyImport
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
@@ -49,7 +45,6 @@ const options: ApexCharts.ApexOptions = {
 			'2021-03-21T00:00:00.000Z',
 			'2021-03-22T00:00:00.000Z',
 			'2021-03-23T00:00:00.000Z',
-			'2021-03-24T00:00:00.000Z',
 		],
 	},
 	fill: {
@@ -63,7 +58,7 @@ const options: ApexCharts.ApexOptions = {
 	},
 };
 
-const series = [{ name: 'series1', data: [31, 120, 10, 28, 64, 22, 22] }];
+const series = [{ name: 'series1', data: [31, 120, 10, 28, 64, 22] }];
 
 export default function Dashboard() {
 	return (
