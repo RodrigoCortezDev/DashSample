@@ -1,5 +1,7 @@
 import Link from 'next/link';
+import { useEffect } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { useDebouncedCallback } from 'use-debounce';
 import * as yup from 'yup';
 
 import { Box, Button, Divider, Flex, Heading, HStack, SimpleGrid, VStack } from '@chakra-ui/react';
@@ -16,7 +18,7 @@ export default function CreateUser() {
 		password: yup.string().required('Senha requerida').min(6, 'Minimo de 6 caracteres'),
 		password_confirmation: yup.string().oneOf([null, yup.ref('password')], 'Senhas devem ser iguais'),
 	});
-	const { register, handleSubmit, formState } = useForm({ resolver: yupResolver(CreateUserFormSchema) });
+	const { register, handleSubmit, formState, setError, watch } = useForm({ resolver: yupResolver(CreateUserFormSchema) });
 	const { errors } = formState;
 
 	type CreateUserFormData = {
@@ -30,6 +32,23 @@ export default function CreateUser() {
 		await new Promise(resolve => setTimeout(resolve, 2000));
 		console.log(values);
 	};
+
+	//#region VALIDACAO DEBOUNCE
+	const watchName = watch('name');
+
+	function handleValidaNomeExiste(value: string) {
+		if (!value) return;
+
+		console.log(value);
+		setError('name', { message: 'Teste de erro debouce', type: value });
+	}
+
+	const debounceHandleValidaNomeExiste = useDebouncedCallback(handleValidaNomeExiste, 1000);
+
+	useEffect(() => {
+		debounceHandleValidaNomeExiste(watchName);
+	}, [watchName, debounceHandleValidaNomeExiste]);
+	//#endregion
 
 	return (
 		<Box>
@@ -69,7 +88,7 @@ export default function CreateUser() {
 					<Flex mt="8" justify={'flex-end'}>
 						<HStack spacing={4}>
 							<Link href="/users" passHref>
-								<Button as="a" colorScheme={'whiteAlpha'}>
+								<Button as="button" colorScheme={'whiteAlpha'}>
 									Cancelar
 								</Button>
 							</Link>
