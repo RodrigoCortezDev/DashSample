@@ -1,24 +1,35 @@
+import * as yup from 'yup';
+import Header from '../../components/Header';
 import Link from 'next/link';
-import { useEffect } from 'react';
+import Sidebar from '../../components/Sidebar';
+import {
+	Box,
+	Button,
+	Divider,
+	Flex,
+	Heading,
+	HStack,
+	SimpleGrid,
+	VStack
+	} from '@chakra-ui/react';
+import { Input } from '../../components/Form/Input';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useDebouncedCallback } from 'use-debounce';
-import * as yup from 'yup';
-
-import { Box, Button, Divider, Flex, Heading, HStack, SimpleGrid, VStack } from '@chakra-ui/react';
+import { useEffect } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-import { Input } from '../../components/Form/Input';
-import Header from '../../components/Header';
-import Sidebar from '../../components/Sidebar';
-
 export default function CreateUser() {
+	//#region YUP VALIDACOES
 	const CreateUserFormSchema = yup.object().shape({
 		name: yup.string().required('Nome Obrigatorio'),
 		email: yup.string().required('Email requerido').email('Email invalido'),
 		password: yup.string().required('Senha requerida').min(6, 'Minimo de 6 caracteres'),
 		password_confirmation: yup.string().oneOf([null, yup.ref('password')], 'Senhas devem ser iguais'),
 	});
-	const { register, handleSubmit, formState, setError, watch } = useForm({ resolver: yupResolver(CreateUserFormSchema) });
+	const { register, handleSubmit, formState, setError, watch } = useForm({
+		resolver: yupResolver(CreateUserFormSchema),
+		mode: 'onChange',
+	});
 	const { errors } = formState;
 
 	type CreateUserFormData = {
@@ -27,15 +38,13 @@ export default function CreateUser() {
 		password: string;
 		password_confirmation: string;
 	};
-
-	const handleCreateUser: SubmitHandler<CreateUserFormData> = async values => {
-		await new Promise(resolve => setTimeout(resolve, 2000));
-		console.log(values);
-	};
+	//#endregion
 
 	//#region VALIDACAO DEBOUNCE
+	//1 - Criar o watch da propriedade que quer fazer debounce check
 	const watchName = watch('name');
 
+	//2 - Classe que vai realizar a validaçãoq ue deseja
 	function handleValidaNomeExiste(value: string) {
 		if (!value) return;
 
@@ -43,12 +52,19 @@ export default function CreateUser() {
 		setError('name', { message: 'Teste de erro debouce', type: value });
 	}
 
+	//3 - Criando a function de debounce, atrelando ela a nossa function que vai validar
 	const debounceHandleValidaNomeExiste = useDebouncedCallback(handleValidaNomeExiste, 1000);
 
+	//4 - useEffect para atrelar o debounce cada vem que essa propriedade for alterada
 	useEffect(() => {
 		debounceHandleValidaNomeExiste(watchName);
 	}, [watchName, debounceHandleValidaNomeExiste]);
 	//#endregion
+
+	const handleCreateUser: SubmitHandler<CreateUserFormData> = async values => {
+		await new Promise(resolve => setTimeout(resolve, 2000));
+		console.log(values);
+	};
 
 	return (
 		<Box>
